@@ -31,3 +31,6 @@ button {
   padding: 5px 10px;
   cursor: pointer;
 }
+#messages { background:#fafafa; padding:10px; border-radius:10px; min-height:200px; }
+.you-msg { text-align:left; margin:6px 0; }
+.alfred-msg { text-align:right; margin:6px 0; font-weight:600; color:#0078d7; }
