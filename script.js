@@ -1,26 +1,44 @@
 function sendMessage() {
   const input = document.getElementById('userInput');
-  const message = input.value.trim();
-  if (!message) return;
+  const msg = input.value.trim();
+  if (!msg) return;
 
-  const messages = document.getElementById('messages');
-  const userMsg = document.createElement('div');
-  userMsg.textContent = '🧑 You: ' + message;
-  messages.appendChild(userMsg);
-
-  // Simple AI reply (you'll upgrade this later)
-  const botMsg = document.createElement('div');
-  botMsg.textContent = '🤖 Alfred: ' + getReply(message);
-  messages.appendChild(botMsg);
-
+  addMessage('you', msg);
   input.value = '';
-  messages.scrollTop = messages.scrollHeight;
+
+  const reply = getReply(msg);
+  addMessage('alfred', reply);
 }
 
-function getReply(message) {
-  const msg = message.toLowerCase();
-  if (msg.includes('hello')) return 'Hi Asim! How can I help?';
-  if (msg.includes('your name')) return 'I am Alfred, your AI assistant!';
-  if (msg.includes('time')) return 'The current time is ' + new Date().toLocaleTimeString();
-  return 'I’m still learning, Asim. Tell me more!';
+function addMessage(who, text) {
+  const chat = document.getElementById('messages');
+  const el = document.createElement('div');
+  el.className = who === 'alfred' ? 'alfred-msg' : 'you-msg';
+  el.textContent = (who === 'alfred' ? '🤖 Alfred: ' : '🧑 You: ') + text;
+  chat.appendChild(el);
+  chat.scrollTop = chat.scrollHeight;
 }
+
+function getReply(msg) {
+  const m = msg.toLowerCase();
+  if (m.includes('hello') || m.includes('hi')) return 'Hello Asim! I\'m Alfred, your assistant.';
+  if (m.includes('how are you')) return 'I\'m always great — no bugs yet!';
+  if (m.includes('time')) return 'It\'s ' + new Date().toLocaleTimeString();
+  if (m.includes('date')) return 'Today is ' + new Date().toLocaleDateString();
+  if (m.includes('who are you')) return 'I am Alfred, your AI assistant.';
+  if (m.includes('help')) return 'You can ask me about time, date, or say hello. You can also teach me using: learn: question => answer';
+
+  if (m.includes('learn:')) {
+    const parts = msg.split('=>').map(p=>p.trim());
+    if (parts.length === 2) {
+      window.memory = window.memory || {};
+      window.memory[parts[0].toLowerCase()] = parts[1];
+      return 'I learned something new!';
+    }
+  }
+
+  if (window.memory && window.memory[m]) return window.memory[m];
+
+  return 'I don\'t know that yet, but you can teach me!';
+}
+
